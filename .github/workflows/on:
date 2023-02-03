@@ -1,0 +1,52 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+name: compile polars
+
+jobs:
+  R-CMD-check:
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.os }} (R-${{ matrix.config.r }} rust-${{ matrix.config.rust-version }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+              os: windows-latest,
+              r: "release",
+              rust-version: "1.58-msvc",
+              rtools-version: "42",
+            }
+          - { os: windows-latest, r: "4.1", rust-version: "1.58-msvc" }
+          - { os: macOS-latest, r: "release", rust-version: "1.58" }
+          - { os: ubuntu-latest, r: "release", rust-version: "1.58" }
+
+    env:
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      TOOLCHAIN: ${{ matrix.config.rust-version }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.config.rust-version }}
+          default: true
+
+      - name: Add Rust targets for R < 4.2 on Windows
+        if: startsWith(runner.os, 'Windows') && matrix.config.r == '4.1'
+        run: |
+          rustup target add x86_64-pc-windows-gnu
+          rustup target add i686-pc-windows-gnu
+
+      - name: compile polars
+        shell: bash
+        run: |
+          cargo run --release
