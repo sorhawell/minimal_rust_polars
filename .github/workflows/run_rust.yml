@@ -21,12 +21,12 @@ jobs:
           - {
               os: windows-latest,
               r: "release",
-              rust-version: "1.61-msvc",
+              rust-version: "1.62-msvc",
               rtools-version: "42",
             }
-          - { os: windows-latest, r: "4.1", rust-version: "1.61-msvc" }
-          - { os: macOS-latest, r: "release", rust-version: "1.61" }
-          - { os: ubuntu-latest, r: "release", rust-version: "1.61" }
+          - { os: windows-latest, r: "4.1", rust-version: "1.62-msvc" }
+          - { os: macOS-latest, r: "release", rust-version: "1.62" }
+          - { os: ubuntu-latest, r: "release", rust-version: "1.62" }
 
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
